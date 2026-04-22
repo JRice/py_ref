@@ -1,0 +1,9 @@
+cd /path/to/project
+git init
+<make a file or two>
+git add .
+git commit -m "Initial"
+gh repo create <project> --public --source=. --remote=origin --push
+git remote add origin https://github.com
+git branch -M main
+git push -u origin main
