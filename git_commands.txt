@@ -3,10 +3,25 @@ cd /path/to/code
 uv init <project>
 cd <project>
 git init
-<make a file or two>
+# Edit the pyproject.toml ... Version 3.12 is recommended for CUDA/Pytorch as of Apr 2026
 git add .
 git commit -m "Initial"
 gh repo create <project> --public --source=. --remote=origin --push
 git remote add origin https://github.com # NOTE: this probably "already exists"
 git branch -M main
 git push -u origin main
+
+# Run code:
+uv run <code.py>
+# Add packages:
+uv add <package>
+
+
+# GIT STUFF
+# Aliases ... edit in C:\Users\<User>\.gitconfig or:
+git config --global alias.st status
+git config --global alias.co checkout
+git config --global alias.ci commit
+git config --global alias.br branch
+git config --global alias.undo 'reset --soft HEAD~1'
+git config --global alias.alias "config --get-regexp ^alias\."
