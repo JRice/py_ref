@@ -1,7 +1,21 @@
 [project]
 name = "py-ref"
 version = "0.1.0"
-description = "Add your description here"
+description = "Python reference / crib sheet — 201-level examples as pytest tests"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pytest",
+    "pytest-asyncio",
+    "httpx",
+    "respx",
+    "pyyaml",
+    "tomli-w",
+    "tinydb",
+    "networkx",
+    "numpy",
+    "duckdb>=1.5.2",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
