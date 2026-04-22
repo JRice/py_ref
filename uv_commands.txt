@@ -1,0 +1,1 @@
+uv venv --python 3.12 # 3.12 is best for pytorch and CUDA as of Apr 2026

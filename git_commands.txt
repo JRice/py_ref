@@ -1,9 +1,12 @@
-cd /path/to/project
+# Assuming you're using uv:
+cd /path/to/code
+uv init <project>
+cd <project>
 git init
 <make a file or two>
 git add .
 git commit -m "Initial"
 gh repo create <project> --public --source=. --remote=origin --push
-git remote add origin https://github.com
+git remote add origin https://github.com # NOTE: this probably "already exists"
 git branch -M main
 git push -u origin main
