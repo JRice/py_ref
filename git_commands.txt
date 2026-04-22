@@ -25,3 +25,6 @@ git config --global alias.ci commit
 git config --global alias.br branch
 git config --global alias.undo 'reset --soft HEAD~1'
 git config --global alias.alias "config --get-regexp ^alias\."
+
+# remove sticky ignored files:
+git rm --cached -f <filename>
