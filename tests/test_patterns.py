@@ -52,9 +52,9 @@ class EventBus:
 
     def on(self, event: str):
         """Decorator sugar: @bus.on('user.signup')"""
-        def decorator(fn):
-            self.subscribe(event, fn)
-            return fn
+        def decorator(func):
+            self.subscribe(event, func)
+            return func
         return decorator
 
 
@@ -79,7 +79,7 @@ def test_observer_unsubscribe():
     bus = EventBus()
     calls = []
 
-    handler = lambda **kw: calls.append(kw)
+    handler = lambda **kwargs: calls.append(kwargs)
     bus.subscribe("tick", handler)
     bus.publish("tick", n=1)
     bus.unsubscribe("tick", handler)
@@ -344,7 +344,7 @@ class UpperCasePipeline(DataPipeline):
         return ["hello", "world", "python"]
 
     def transform(self, data):
-        return [s.upper() for s in data]
+        return [text.upper() for text in data]
 
 
 class EvenNumberPipeline(DataPipeline):
@@ -352,7 +352,7 @@ class EvenNumberPipeline(DataPipeline):
         return list(range(10))
 
     def transform(self, data):
-        return [n for n in data if n % 2 == 0]
+        return [number for number in data if number % 2 == 0]
 
     def load(self, data):
         return {"values": data, "count": len(data)}  # override load
@@ -544,9 +544,9 @@ class FormatRegistry:
         self._registry: dict[str, Callable] = {}
 
     def register(self, name: str):
-        def decorator(fn: Callable) -> Callable:
-            self._registry[name] = fn
-            return fn
+        def decorator(func: Callable) -> Callable:
+            self._registry[name] = func
+            return func
         return decorator
 
     def serialize(self, name: str, data: Any) -> str:
@@ -568,11 +568,11 @@ def _json_serializer(data) -> str:
 
 @formats.register("csv_row")
 def _csv_serializer(data: dict) -> str:
-    return ",".join(str(v) for v in data.values())
+    return ",".join(str(value) for value in data.values())
 
 @formats.register("pipe")
 def _pipe_serializer(data: dict) -> str:
-    return "|".join(str(v) for v in data.values())
+    return "|".join(str(value) for value in data.values())
 
 
 def test_registry_dispatch():
@@ -628,8 +628,8 @@ class Validated:
 
 
 class BankAccount:
-    owner   = Validated(lambda v: isinstance(v, str) and v, "must be a non-empty string")
-    balance = Validated(lambda v: isinstance(v, (int, float)) and v >= 0, "must be >= 0")
+    owner   = Validated(lambda value: isinstance(value, str) and value, "must be a non-empty string")
+    balance = Validated(lambda value: isinstance(value, (int, float)) and value >= 0, "must be >= 0")
 
     def __init__(self, owner: str, balance: float = 0.0):
         self.owner   = owner

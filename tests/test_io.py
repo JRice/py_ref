@@ -50,8 +50,8 @@ def test_json_custom_encoder(tmp_path):
 def test_json_streaming_large_array():
     # json.JSONDecoder can parse incrementally; simpler: ijson for huge files.
     # For moderate sizes, just use json.loads on the string.
-    lines = [json.dumps({"n": i}) for i in range(5)]
-    parsed = [json.loads(line) for line in lines]
+    lines = [json.dumps({"n": index}) for index in range(5)]
+    parsed = [json.loads(json_line) for json_line in lines]
     assert parsed[3]["n"] == 3
 
 
@@ -168,9 +168,9 @@ def test_toml_from_string():
     port = 8080
     workers = 4
     """
-    cfg = tomllib.loads(raw)
-    assert cfg["server"]["port"] == 8080
-    assert cfg["server"]["workers"] == 4
+    config = tomllib.loads(raw)
+    assert config["server"]["port"] == 8080
+    assert config["server"]["workers"] == 4
 
 
 # ===========================================================================
@@ -205,7 +205,7 @@ def test_xml_fromstring_and_xpath():
     </feed>"""
     root = ET.fromstring(xml)
 
-    titles = [e.text for e in root.findall(".//title")]
+    titles = [element.text for element in root.findall(".//title")]
     assert titles == ["Hello World", "Second Post"]
 
     # XPath attribute predicate

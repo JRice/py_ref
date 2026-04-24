@@ -99,11 +99,11 @@ def greet(
     times: Annotated[int,  typer.Option("--times", "-n", help="Repetitions")] = 1,
     shout: Annotated[bool, typer.Option("--shout/--no-shout")]                 = False,
 ):
-    msg = f"Hello, {name}!"
+    message = f"Hello, {name}!"
     if shout:
-        msg = msg.upper()
+        message = message.upper()
     for _ in range(times):
-        typer.echo(msg)
+        typer.echo(message)
 
 
 @app.command()
@@ -124,9 +124,9 @@ def test_typer_basic():
 def test_typer_options():
     result = runner.invoke(app, ["greet", "Bob", "--times", "3", "--shout"])
     assert result.exit_code == 0
-    lines = [l for l in result.output.strip().splitlines() if l]
+    lines = [line for line in result.output.strip().splitlines() if line]
     assert len(lines) == 3
-    assert all("BOB" in l for l in lines)
+    assert all("BOB" in line for line in lines)
 
 
 def test_typer_subcommand():

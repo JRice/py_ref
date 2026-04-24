@@ -106,7 +106,7 @@ def test_nosql_insert_and_search(tdb):
 
     Q = Query()
     admins = tdb.search(Q.tags.any(["admin"]))
-    assert {r["user"] for r in admins} == {"alice", "carol"}
+    assert {record["user"] for record in admins} == {"alice", "carol"}
 
     high_scorers = tdb.search(Q.score > 40)
     assert len(high_scorers) == 2
@@ -196,7 +196,7 @@ def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
 
 def ann_search(query: np.ndarray, vectors: np.ndarray, k: int) -> list[int]:
     """Brute-force k-nearest-neighbours by cosine similarity."""
-    sims = [cosine_similarity(query, v) for v in vectors]
+    sims = [cosine_similarity(query, vector) for vector in vectors]
     return sorted(range(len(sims)), key=lambda i: sims[i], reverse=True)[:k]
 
 

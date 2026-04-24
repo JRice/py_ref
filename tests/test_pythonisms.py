@@ -32,10 +32,10 @@ class Timer:
 
 
 def test_context_manager_class():
-    with Timer() as t:
-        x = sum(range(10_000))
-    assert x == 49995000
-    assert t.elapsed >= 0
+    with Timer() as timer:
+        total = sum(range(10_000))
+    assert total == 49995000
+    assert timer.elapsed >= 0
 
 
 @contextlib.contextmanager
@@ -49,10 +49,10 @@ def managed_list() -> Iterator[list]:
 
 
 def test_contextmanager_decorator():
-    with managed_list() as lst:
-        lst.extend([1, 2, 3])
-        assert lst == [1, 2, 3]
-    assert lst == []   # cleaned up in finally
+    with managed_list() as items:
+        items.extend([1, 2, 3])
+        assert items == [1, 2, 3]
+    assert items == []   # cleaned up in finally
 
 
 # ---------------------------------------------------------------------------
@@ -141,7 +141,7 @@ class Triangle:
 
 
 def render_all(shapes: list[Drawable]) -> str:
-    return " ".join(s.draw() for s in shapes)
+    return " ".join(shape.draw() for shape in shapes)
 
 
 def test_protocol_structural_typing():
@@ -168,16 +168,16 @@ class Config:
 
 
 def test_dataclass_defaults_and_validation():
-    cfg = Config("localhost")
-    assert cfg.port == 5432
-    assert cfg.debug is False
-    assert cfg.tags == []
+    config = Config("localhost")
+    assert config.port == 5432
+    assert config.debug is False
+    assert config.tags == []
 
-    cfg2 = Config("prod.server", 5433, debug=True, tags=["prod"])
-    assert cfg2.tags == ["prod"]
+    config2 = Config("prod.server", 5433, debug=True, tags=["prod"])
+    assert config2.tags == ["prod"]
 
     # Mutable default_factory means each instance gets its own list
-    assert cfg.tags is not cfg2.tags
+    assert config.tags is not config2.tags
 
 
 def test_dataclass_frozen():
@@ -213,11 +213,11 @@ class Stack(Generic[T]):
 
 
 def test_generic_stack():
-    s: Stack[int] = Stack()
-    s.push(1)
-    s.push(2)
-    assert s.pop() == 2
-    assert len(s) == 1
+    stack: Stack[int] = Stack()
+    stack.push(1)
+    stack.push(2)
+    assert stack.pop() == 2
+    assert len(stack) == 1
 
 
 # ---------------------------------------------------------------------------
@@ -275,12 +275,12 @@ def classify_event(event: dict) -> str:
     match event:
         case {"type": "click", "button": "left"}:
             return "left-click"
-        case {"type": "click", "button": btn}:
-            return f"click:{btn}"
-        case {"type": "keypress", "key": str(k)}:
-            return f"key:{k}"
-        case {"type": t}:
-            return f"unknown:{t}"
+        case {"type": "click", "button": button}:
+            return f"click:{button}"
+        case {"type": "keypress", "key": str(key)}:
+            return f"key:{key}"
+        case {"type": event_type}:
+            return f"unknown:{event_type}"
         case _:
             return "invalid"
 
@@ -314,6 +314,6 @@ def test_string_methods():
     assert s.strip().replace("World", "Python") == "Hello, Python!"
 
     csv_line = "alice,30,engineer"
-    parts = csv_line.split(",")
-    assert parts == ["alice", "30", "engineer"]
-    assert "-".join(parts) == "alice-30-engineer"
+    fields = csv_line.split(",")
+    assert fields == ["alice", "30", "engineer"]
+    assert "-".join(fields) == "alice-30-engineer"

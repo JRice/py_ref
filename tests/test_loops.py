@@ -10,31 +10,31 @@ Python loop idioms — comprehensions, generators, walrus, unpacking, etc.
 def test_list_comprehension_with_condition():
     # Filter + transform in one expression
     words = ["apple", "fig", "banana", "kiwi", "cherry"]
-    long_upper = [w.upper() for w in words if len(w) > 4]
+    long_upper = [word.upper() for word in words if len(word) > 4]
     assert long_upper == ["APPLE", "BANANA", "CHERRY"]
 
 
 def test_nested_comprehension_flatten():
     matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-    flat = [n for row in matrix for n in row]
+    flat = [number for row in matrix for number in row]
     assert flat == [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
 def test_dict_comprehension():
     words = ["hello", "world", "python"]
-    length_map = {w: len(w) for w in words}
+    length_map = {word: len(word) for word in words}
     assert length_map == {"hello": 5, "world": 5, "python": 6}
 
 
 def test_set_comprehension():
     nums = [1, 2, 2, 3, 3, 3]
-    squares = {n**2 for n in nums}
+    squares = {number**2 for number in nums}
     assert squares == {1, 4, 9}
 
 
 def test_generator_expression_is_lazy():
     # Generator doesn't materialise the list — useful for large datasets
-    gen = (n**2 for n in range(10))
+    gen = (number**2 for number in range(10))
     assert next(gen) == 0
     assert next(gen) == 1
     assert sum(gen) == 4+9+16+25+36+49+64+81   # rest of the sequence (0,1 already consumed)
@@ -56,8 +56,8 @@ def test_zip_loop_parallel_iteration():
     keys   = ["a", "b", "c"]
     values = [1, 2, 3]
     result = {}
-    for k, v in zip(keys, values):
-        result[k] = v
+    for key, value in zip(keys, values):
+        result[key] = value
     assert result == {"a": 1, "b": 2, "c": 3}
 
 
@@ -68,10 +68,10 @@ def test_zip_loop_parallel_iteration():
 def test_walrus_in_while():
     data = iter([10, 20, 0, 30])   # 0 signals "stop"
     results = []
-    while (val := next(data, None)) is not None:
-        if val == 0:
+    while (value := next(data, None)) is not None:
+        if value == 0:
             break
-        results.append(val)
+        results.append(value)
     assert results == [10, 20]
 
 
@@ -80,7 +80,7 @@ def test_walrus_in_comprehension():
     import math
     nums = [1, 4, 9, 16, 25]
     # Only include if sqrt is an integer
-    perfect = [root for n in nums if (root := int(math.sqrt(n)))**2 == n]
+    perfect = [root for number in nums if (root := int(math.sqrt(number)))**2 == number]
     assert perfect == [1, 2, 3, 4, 5]
 
 
@@ -91,8 +91,8 @@ def test_walrus_in_comprehension():
 def test_starred_unpacking_in_loop():
     rows = [(1, "Alice", 30), (2, "Bob", 25)]
     ids = []
-    for uid, *_ in rows:
-        ids.append(uid)
+    for user_id, *_ in rows:
+        ids.append(user_id)
     assert ids == [1, 2]
 
 
@@ -115,8 +115,8 @@ def test_for_else_no_match():
     primes = [2, 3, 5, 7, 11]
     target = 6
     found = False
-    for p in primes:
-        if p == target:
+    for prime in primes:
+        if prime == target:
             found = True
             break
     else:
@@ -160,13 +160,13 @@ def test_generator_pipeline():
         yield from range(n)
 
     def only_even(numbers):
-        for n in numbers:
-            if n % 2 == 0:
-                yield n
+        for number in numbers:
+            if number % 2 == 0:
+                yield number
 
     def squared(numbers):
-        for n in numbers:
-            yield n * n
+        for number in numbers:
+            yield number * number
 
     pipeline = squared(only_even(read_numbers(10)))
     assert list(pipeline) == [0, 4, 16, 36, 64]
@@ -179,7 +179,7 @@ def test_generator_pipeline():
 def test_pairwise_consecutive_diffs():
     import itertools
     prices = [100, 110, 105, 120, 115]
-    diffs = [b - a for a, b in itertools.pairwise(prices)]
+    diffs = [second - first for first, second in itertools.pairwise(prices)]
     assert diffs == [10, -5, 15, -5]
 
 
@@ -199,7 +199,7 @@ def test_dict_iteration():
     assert items == [("x", 1), ("y", 2), ("z", 3)]
 
     # Modify during iteration — iterate a copy
-    for k in list(d):
-        if d[k] < 2:
-            del d[k]
+    for key in list(d):
+        if d[key] < 2:
+            del d[key]
     assert d == {"y": 2, "z": 3}

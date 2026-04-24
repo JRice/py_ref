@@ -30,7 +30,7 @@ import pytest
 def test_secrets_token_hex():
     token = secrets.token_hex(32)    # 32 bytes → 64 hex chars
     assert len(token) == 64
-    assert all(c in "0123456789abcdef" for c in token)
+    assert all(char in "0123456789abcdef" for char in token)
 
 
 def test_secrets_token_urlsafe():
@@ -61,7 +61,7 @@ def test_secrets_choice_for_passphrase():
     wordlist = ["correct", "horse", "battery", "staple", "paper", "clip"]
     passphrase = " ".join(secrets.choice(wordlist) for _ in range(4))
     assert len(passphrase.split()) == 4
-    assert all(w in wordlist for w in passphrase.split())
+    assert all(word in wordlist for word in passphrase.split())
 
 
 # ===========================================================================
@@ -117,18 +117,18 @@ def verify(message: bytes, key: bytes, signature: str) -> bool:
 
 def test_hmac_sign_and_verify():
     key  = secrets.token_bytes(32)
-    msg  = b'{"user_id": 42, "role": "admin"}'
-    sig  = sign(msg, key)
+    message  = b'{"user_id": 42, "role": "admin"}'
+    sig  = sign(message, key)
 
-    assert verify(msg, key, sig)
+    assert verify(message, key, sig)
     assert not verify(b"tampered", key, sig)
 
 
 def test_hmac_different_keys_different_sigs():
-    msg  = b"data"
-    k1   = secrets.token_bytes(32)
-    k2   = secrets.token_bytes(32)
-    assert sign(msg, k1) != sign(msg, k2)
+    message  = b"data"
+    key1   = secrets.token_bytes(32)
+    key2   = secrets.token_bytes(32)
+    assert sign(message, key1) != sign(message, key2)
 
 
 # ===========================================================================

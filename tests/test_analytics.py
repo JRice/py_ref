@@ -82,7 +82,7 @@ def test_duck_window_running_total(sales_duck):
     """).fetchall()
 
     # North / Widget: 120 → 270 (120+150)
-    widget_rows = [r for r in rows if r[1] == "Widget"]
+    widget_rows = [row for row in rows if row[1] == "Widget"]
     assert widget_rows[0][3] == 120
     assert widget_rows[1][3] == 270
 
@@ -99,7 +99,7 @@ def test_duck_window_rank(sales_duck):
     """).fetchall()
 
     # January: North sold 120+30=150, South sold 80 → North ranks 1
-    jan = [r for r in rows if r[0] == "2024-01"]
+    jan = [row for row in rows if row[0] == "2024-01"]
     assert jan[0][1] == "North"
     assert jan[0][3] == 1
 
@@ -119,7 +119,7 @@ def test_duck_window_lag_month_over_month(sales_duck):
         ORDER  BY product, month
     """).fetchall()
 
-    gadget = [r for r in rows if r[1] == "Gadget"]
+    gadget = [row for row in rows if row[1] == "Gadget"]
     assert gadget[0][3] is None       # no previous month
     assert gadget[1][4] == gadget[1][2] - gadget[0][2]   # delta = units - prev
 
@@ -243,7 +243,7 @@ def test_fts5_basic_search(fts_db):
     rows = fts_db.execute(
         "SELECT title FROM articles WHERE articles MATCH 'asyncio'"
     ).fetchall()
-    titles = [r[0] for r in rows]
+    titles = [row[0] for row in rows]
     assert "Python asyncio guide" in titles
     assert "Async web scraping with httpx" in titles
 
@@ -260,10 +260,10 @@ def test_fts5_bm25_ranking(fts_db):
         ORDER  BY rank
     """).fetchall()
 
-    titles = [r[0] for r in rows]
+    titles = [row[0] for row in rows]
     # Both Python articles should appear; rank is a float
-    assert any("Python" in t for t in titles)
-    assert all(isinstance(r[1], float) for r in rows)
+    assert any("Python" in title for title in titles)
+    assert all(isinstance(row[1], float) for row in rows)
     assert rows[0][1] < rows[-1][1]   # first result is most relevant (most negative)
 
 
@@ -291,8 +291,8 @@ def test_fts5_column_filter(fts_db):
     rows = fts_db.execute(
         "SELECT title FROM articles WHERE articles MATCH 'title:database'"
     ).fetchall()
-    titles = [r[0] for r in rows]
-    assert any("database" in t.lower() for t in titles)
+    titles = [row[0] for row in rows]
+    assert any("database" in title.lower() for title in titles)
     # Body-only mention in asyncio guide should NOT appear
     assert "Python asyncio guide" not in titles
 

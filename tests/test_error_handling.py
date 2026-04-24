@@ -57,10 +57,10 @@ class ExternalServiceError(AppError):
     def __init__(self, service: str, status_code: int | None = None):
         self.service = service
         self.status_code = status_code
-        msg = f"{service} unavailable"
+        message = f"{service} unavailable"
         if status_code:
-            msg += f" (HTTP {status_code})"
-        super().__init__(msg)
+            message += f" (HTTP {status_code})"
+        super().__init__(message)
 
 
 def test_exception_hierarchy_isinstance():
@@ -149,7 +149,7 @@ def test_exception_group_except_star():
     try:
         validate_all({"age": -1})
     except* ValidationError as eg:
-        fields = [e.field for e in eg.exceptions]
+        fields = [error.field for error in eg.exceptions]
         assert "name"  in fields
         assert "email" in fields
         assert "age"   in fields
@@ -169,7 +169,7 @@ def test_logging_levels_and_caplog(caplog):
         log.error("payment failed: %s", "ORD-2")
 
     assert len(caplog.records) == 4
-    levels = [r.levelname for r in caplog.records]
+    levels = [record.levelname for record in caplog.records]
     assert levels == ["DEBUG", "INFO", "WARNING", "ERROR"]
 
 
@@ -224,8 +224,8 @@ def test_structlog_bound_logger():
         request_log.info("request.start",  path="/api/orders")
         request_log.info("request.finish", status=200)
 
-    assert all(e["request_id"] == "req-abc" for e in captured)
-    assert all(e["user_id"]    == 7         for e in captured)
+    assert all(entry["request_id"] == "req-abc" for entry in captured)
+    assert all(entry["user_id"]    == 7         for entry in captured)
     assert captured[1]["status"] == 200
 
 
@@ -331,7 +331,7 @@ def test_retry_selective_exception_type():
 
 def test_retry_with_logging(caplog):
     attempt_log = logging.getLogger("tenacity")
-    counter = {"n": 0}
+    counter = {"count": 0}
 
     @retry(
         stop=stop_after_attempt(3),
@@ -340,8 +340,8 @@ def test_retry_with_logging(caplog):
         after=after_log(attempt_log,  logging.DEBUG),
     )
     def tracked():
-        counter["n"] += 1
-        if counter["n"] < 3:
+        counter["count"] += 1
+        if counter["count"] < 3:
             raise IOError("not yet")
         return "done"
 
@@ -349,4 +349,4 @@ def test_retry_with_logging(caplog):
         result = tracked()
 
     assert result == "done"
-    assert counter["n"] == 3
+    assert counter["count"] == 3

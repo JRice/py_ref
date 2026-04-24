@@ -82,11 +82,11 @@ class Config:
     tags: list[str] = attrs.Factory(list)   # mutable default via Factory
 
 def test_attrs_converter_and_factory():
-    cfg = Config(port="9000")   # string coerced to int
-    assert cfg.port == 9000
-    cfg.tags.append("prod")
-    cfg2 = Config()
-    assert cfg2.tags == []      # separate list per instance
+    config = Config(port="9000")   # string coerced to int
+    assert config.port == 9000
+    config.tags.append("prod")
+    config2 = Config()
+    assert config2.tags == []      # separate list per instance
 
 
 # ===========================================================================
@@ -133,7 +133,7 @@ def test_namedtuple_as_dict_and_replace():
 
 def test_namedtuple_sorting():
     movies = [Movie("Z", 2000, 7.0), Movie("A", 2020, 9.5), Movie("M", 2010, 6.0)]
-    by_rating = sorted(movies, key=lambda m: m.rating, reverse=True)
+    by_rating = sorted(movies, key=lambda movie: movie.rating, reverse=True)
     assert by_rating[0].title == "A"
 
 
@@ -185,13 +185,13 @@ class Version:
     """Semantic version: 1.2.3"""
 
     def __init__(self, version_str: str):
-        self._parts = tuple(int(p) for p in version_str.split("."))
+        self._parts = tuple(int(part) for part in version_str.split("."))
 
     def __repr__(self) -> str:          # unambiguous; used in repr(), REPL
-        return f"Version({'.'.join(str(p) for p in self._parts)!r})"
+        return f"Version({'.'.join(str(part) for part in self._parts)!r})"
 
     def __str__(self) -> str:           # human-readable; used in print(), str()
-        return ".".join(str(p) for p in self._parts)
+        return ".".join(str(part) for part in self._parts)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Version):
@@ -283,8 +283,8 @@ HttpMethod = Literal["GET", "POST", "PUT", "DELETE", "PATCH"]
 
 def move(steps: int, direction: Direction) -> tuple[int, int]:
     deltas = {"north": (0, 1), "south": (0, -1), "east": (1, 0), "west": (-1, 0)}
-    dx, dy = deltas[direction]
-    return (dx * steps, dy * steps)
+    delta_x, delta_y = deltas[direction]
+    return (delta_x * steps, delta_y * steps)
 
 
 def test_literal_values():
@@ -312,12 +312,12 @@ class Comparable(Protocol):
 C = TypeVar("C", bound=Comparable)
 
 
-def clamp(value: C, lo: C, hi: C) -> C:
-    """Constrain value to [lo, hi]. Works for any Comparable type."""
-    if value < lo:
-        return lo
-    if hi < value:
-        return hi
+def clamp(value: C, lower: C, upper: C) -> C:
+    """Constrain value to [lower, upper]. Works for any Comparable type."""
+    if value < lower:
+        return lower
+    if upper < value:
+        return upper
     return value
 
 
@@ -346,34 +346,34 @@ class DataSet:
     def stats(self) -> dict:
         """Computed once on first access, then cached on the instance."""
         self._compute_count += 1
-        n = len(self.values)
-        mean = sum(self.values) / n
-        variance = sum((x - mean) ** 2 for x in self.values) / n
-        return {"n": n, "mean": mean, "std": math.sqrt(variance)}
+        count = len(self.values)
+        mean = sum(self.values) / count
+        variance = sum((value - mean) ** 2 for value in self.values) / count
+        return {"n": count, "mean": mean, "std": math.sqrt(variance)}
 
 
 def test_cached_property_computed_once():
-    ds = DataSet([2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0])
-    _ = ds.stats
-    _ = ds.stats   # second access — should NOT recompute
-    assert ds._compute_count == 1
-    assert round(ds.stats["mean"], 4) == 5.0
-    assert round(ds.stats["std"],  4) == 2.0
+    dataset = DataSet([2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0])
+    _ = dataset.stats
+    _ = dataset.stats   # second access — should NOT recompute
+    assert dataset._compute_count == 1
+    assert round(dataset.stats["mean"], 4) == 5.0
+    assert round(dataset.stats["std"],  4) == 2.0
 
 
 def test_cached_property_stored_in_instance_dict():
-    ds = DataSet([1.0, 2.0, 3.0])
-    assert "stats" not in ds.__dict__   # not yet computed
-    _ = ds.stats
-    assert "stats" in ds.__dict__       # now cached directly on instance
+    dataset = DataSet([1.0, 2.0, 3.0])
+    assert "stats" not in dataset.__dict__   # not yet computed
+    _ = dataset.stats
+    assert "stats" in dataset.__dict__       # now cached directly on instance
 
 
 def test_cached_property_invalidation():
     # To invalidate: delete from __dict__
-    ds = DataSet([1.0, 2.0, 3.0])
-    _ = ds.stats
-    del ds.__dict__["stats"]
-    ds.values.append(4.0)
-    new_stats = ds.stats
+    dataset = DataSet([1.0, 2.0, 3.0])
+    _ = dataset.stats
+    del dataset.__dict__["stats"]
+    dataset.values.append(4.0)
+    new_stats = dataset.stats
     assert new_stats["n"] == 4
-    assert ds._compute_count == 2    # recomputed once after invalidation
+    assert dataset._compute_count == 2    # recomputed once after invalidation

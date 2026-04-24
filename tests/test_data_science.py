@@ -89,7 +89,7 @@ def test_numpy_vectorised_vs_loop():
         return math.sqrt(sum(x**2 for x in arr) / len(arr))
 
     # NumPy vectorised
-    np_rmse = lambda arr: np.sqrt(np.mean(arr**2))
+    np_rmse = lambda array: np.sqrt(np.mean(array**2))
 
     assert math.isclose(python_rmse(data), np_rmse(data), rel_tol=1e-9)
 
@@ -112,8 +112,8 @@ def test_numpy_linear_algebra():
 
     vals, vecs = np.linalg.eig(A)
     # Eigenvalue equation: A @ v = λ * v
-    for val, vec in zip(vals, vecs.T):
-        assert np.allclose(A @ vec, val * vec)
+    for eigenvalue, eigenvector in zip(vals, vecs.T):
+        assert np.allclose(A @ eigenvector, eigenvalue * eigenvector)
 
 
 def test_numpy_where_and_clip():
@@ -205,7 +205,7 @@ def test_pandas_fillna_and_dropna():
 
 def test_pandas_apply(sales_df):
     df = sales_df.copy()
-    df["label"] = df["units"].apply(lambda u: "high" if u >= 100 else "low")
+    df["label"] = df["units"].apply(lambda units: "high" if units >= 100 else "low")
     high_count = (df["label"] == "high").sum()
     assert high_count == 2   # units >= 100: [120, 150]
 

@@ -39,7 +39,7 @@ def test_thread_pool_map():
     with ThreadPoolExecutor(max_workers=5) as pool:
         results = list(pool.map(slow_fetch, urls))
     assert len(results) == 5
-    assert all(r.startswith("data:") for r in results)
+    assert all(result.startswith("data:") for result in results)
 
 
 def test_thread_pool_as_completed_fastest_first():
@@ -70,11 +70,11 @@ def test_thread_pool_exception_propagation():
 
     results = []
     errors  = []
-    for f in futures:
+    for future in futures:
         try:
-            results.append(f.result())
-        except ValueError as e:
-            errors.append(str(e))
+            results.append(future.result())
+        except ValueError as error:
+            errors.append(str(error))
 
     assert errors == ["bad input"]
     assert 0 in results and 1 in results
@@ -120,8 +120,8 @@ def test_lock_prevents_race_condition():
                 counter["value"] += 1
 
     threads = [threading.Thread(target=increment, args=(100,)) for _ in range(10)]
-    for t in threads: t.start()
-    for t in threads: t.join()
+    for thread in threads: thread.start()
+    for thread in threads: thread.join()
 
     assert counter["value"] == 1000   # exact, not racy
 
@@ -139,9 +139,9 @@ def test_rlock_reentrant():
         with rlock:      # would deadlock with a regular Lock
             result.append("inner")
 
-    t = threading.Thread(target=outer)
-    t.start()
-    t.join()
+    thread = threading.Thread(target=outer)
+    thread.start()
+    thread.join()
     assert result == ["inner"]
 
 
@@ -267,7 +267,7 @@ async def test_asyncio_wait_all():
     done, pending = await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
 
     assert len(pending) == 0
-    assert {t.result() for t in done} == {0, 2, 4, 6, 8}
+    assert {task.result() for task in done} == {0, 2, 4, 6, 8}
 
 
 # ===========================================================================

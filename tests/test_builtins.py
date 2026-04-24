@@ -16,8 +16,8 @@ def test_min_max_with_key():
         {"name": "Gadget", "price": 24.99},
         {"name": "Doohickey", "price": 4.99},
     ]
-    cheapest = min(products, key=lambda p: p["price"])
-    priciest = max(products, key=lambda p: p["price"])
+    cheapest = min(products, key=lambda product: product["price"])
+    priciest = max(products, key=lambda product: product["price"])
     assert cheapest["name"] == "Doohickey"
     assert priciest["name"] == "Gadget"
 
@@ -25,7 +25,7 @@ def test_min_max_with_key():
 def test_sum_abs():
     deltas = [3, -7, 2, -1, 5]
     assert sum(deltas) == 2
-    assert sum(abs(d) for d in deltas) == 18
+    assert sum(abs(delta) for delta in deltas) == 18
 
 
 def test_min_max_default():
@@ -46,7 +46,7 @@ def test_range_variants():
 
 def test_enumerate():
     colors = ["red", "green", "blue"]
-    result = [(i, c) for i, c in enumerate(colors, start=1)]
+    result = [(i, color) for i, color in enumerate(colors, start=1)]
     assert result == [(1, "red"), (2, "green"), (3, "blue")]
 
 
@@ -79,8 +79,8 @@ def test_zip_transpose():
 
 def test_sorted_preserves_original():
     nums = [3, 1, 4, 1, 5]
-    s = sorted(nums)
-    assert s == [1, 1, 3, 4, 5]
+    sorted_nums = sorted(nums)
+    assert sorted_nums == [1, 1, 3, 4, 5]
     assert nums == [3, 1, 4, 1, 5]   # original unchanged
 
 
@@ -102,8 +102,8 @@ def test_any_all():
     assert all(statuses) is False
 
     nums = [2, 4, 6, 8]
-    assert all(n % 2 == 0 for n in nums)   # generator, short-circuits
-    assert not any(n > 10 for n in nums)
+    assert all(number % 2 == 0 for number in nums)   # generator, short-circuits
+    assert not any(number > 10 for number in nums)
 
 
 # ---------------------------------------------------------------------------
@@ -113,14 +113,14 @@ def test_any_all():
 def test_map_filter():
     nums = range(10)
 
-    evens = list(filter(lambda n: n % 2 == 0, nums))
+    evens = list(filter(lambda number: number % 2 == 0, nums))
     assert evens == [0, 2, 4, 6, 8]
 
-    squared = list(map(lambda n: n ** 2, evens))
+    squared = list(map(lambda number: number ** 2, evens))
     assert squared == [0, 4, 16, 36, 64]
 
     # Idiomatic Python prefers comprehensions over map/filter
-    assert [n**2 for n in range(10) if n % 2 == 0] == squared
+    assert [number**2 for number in range(10) if number % 2 == 0] == squared
 
 
 # ---------------------------------------------------------------------------
@@ -129,7 +129,7 @@ def test_map_filter():
 
 def test_reduce():
     nums = [1, 2, 3, 4, 5]
-    product = functools.reduce(lambda acc, n: acc * n, nums)
+    product = functools.reduce(lambda accumulator, number: accumulator * number, nums)
     assert product == 120
 
 
@@ -190,9 +190,9 @@ def test_itertools_groupby():
         {"dept": "eng", "name": "Bob"},
         {"dept": "mkt", "name": "Carol"},
     ]
-    data.sort(key=lambda d: d["dept"])
-    groups = {k: [e["name"] for e in v]
-              for k, v in itertools.groupby(data, key=lambda d: d["dept"])}
+    data.sort(key=lambda entry: entry["dept"])
+    groups = {key: [entry["name"] for entry in group_items]
+              for key, group_items in itertools.groupby(data, key=lambda entry: entry["dept"])}
     assert groups["eng"] == ["Alice", "Bob"]
     assert groups["mkt"] == ["Carol"]
 

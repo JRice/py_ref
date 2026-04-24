@@ -246,7 +246,7 @@ def test_numpy_avoid_python_loop_with_where():
     thresholds = 15.0
 
     # Python loop version
-    labels_py = ["expensive" if p >= thresholds else "cheap" for p in prices]
+    labels_py = ["expensive" if price >= thresholds else "cheap" for price in prices]
 
     # NumPy version
     labels_np = np.where(prices >= thresholds, "expensive", "cheap")
@@ -316,6 +316,6 @@ def test_bigo_comments_as_documentation():
     d = deque(range(1000))
     lst = list(range(1000))
 
-    dq_time   = timeit.timeit(lambda: d.appendleft(0),   number=10_000)
-    lst_time  = timeit.timeit(lambda: lst.insert(0, 0),  number=10_000)
-    assert dq_time < lst_time
+    dq_time   = timeit.timeit(lambda: d.appendleft(0),     number=10_000)
+    list_time2  = timeit.timeit(lambda: lst.insert(0, 0),  number=10_000)
+    assert dq_time < list_time2

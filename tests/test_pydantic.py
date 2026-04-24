@@ -58,7 +58,7 @@ def test_pydantic_validation_error_details():
         User(id=1, name="", email="not-an-email", age=200)
 
     errors = exc_info.value.errors()
-    fields_with_errors = {e["loc"][0] for e in errors}
+    fields_with_errors = {error["loc"][0] for error in errors}
     assert "name"  in fields_with_errors   # too short
     assert "email" in fields_with_errors   # invalid format
     assert "age"   in fields_with_errors   # > 150
@@ -146,9 +146,9 @@ def test_nested_model_validation_propagates():
             ship_to={"street": "x", "city": "y"},
             items=[],
         )
-    fields = {str(e["loc"]) for e in exc_info.value.errors()}
+    fields = {str(error["loc"]) for error in exc_info.value.errors()}
     # Errors are on nested paths like ("customer", "name")
-    assert any("customer" in f for f in fields)
+    assert any("customer" in field for field in fields)
 
 
 # ===========================================================================

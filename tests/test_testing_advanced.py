@@ -54,7 +54,7 @@ def test_caplog_captures_warning(caplog):
 
     assert result == "rejected"
     assert "zero/negative" in caplog.text
-    assert any(r.levelno == logging.WARNING for r in caplog.records)
+    assert any(record.levelno == logging.WARNING for record in caplog.records)
 
 
 def test_caplog_no_unexpected_logs(caplog):
@@ -199,9 +199,9 @@ def test_hypothesis_sorted_is_sorted(lst):
 @given(st.lists(st.floats(allow_nan=False, allow_infinity=False), min_size=1))
 def test_hypothesis_max_is_in_list(lst):
     assume(len(lst) > 0)
-    m = max(lst)
-    assert m in lst
-    assert all(x <= m for x in lst)
+    maximum = max(lst)
+    assert maximum in lst
+    assert all(value <= maximum for value in lst)
 
 
 @given(st.dictionaries(st.text(), st.integers()))
@@ -274,7 +274,7 @@ def test_pytest_warns_captures_multiple():
         warnings.warn("first",  UserWarning)
         warnings.warn("second", UserWarning)
 
-    messages = [str(w.message) for w in warning_list]
+    messages = [str(warning.message) for warning in warning_list]
     assert "first"  in messages
     assert "second" in messages
 
@@ -291,7 +291,7 @@ def generate_report(data: list[dict]) -> str:
     for row in data:
         lines.append(f"- {row['name']}: ${row['revenue']:,.2f}")
     lines.append("")
-    lines.append(f"Total: ${sum(r['revenue'] for r in data):,.2f}")
+    lines.append(f"Total: ${sum(row['revenue'] for row in data):,.2f}")
     return "\n".join(lines)
 
 

@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 def test_list_comprehension_and_slicing():
     # Fahrenheit -> Celsius for a week of temps
     temps_f = [32, 68, 86, 77, 95, 104, 59]
-    temps_c = [(f - 32) * 5 / 9 for f in temps_f]
+    temps_c = [(fahrenheit - 32) * 5 / 9 for fahrenheit in temps_f]
     assert temps_c[0] == 0.0
     assert round(temps_c[1], 1) == 20.0
 
@@ -79,7 +79,7 @@ def test_dict_comprehension_and_merge():
     prices = {"apple": 1.2, "banana": 0.5, "cherry": 3.0}
 
     # Apply 10% discount
-    discounted = {k: round(v * 0.9, 2) for k, v in prices.items()}
+    discounted = {key: round(value * 0.9, 2) for key, value in prices.items()}
     assert discounted["apple"] == 1.08
 
     # Merge two dicts (later dict wins on conflict) — Python 3.9+ | operator
@@ -169,8 +169,8 @@ def test_defaultdict_grouping():
 def test_defaultdict_counting():
     text = "abracadabra"
     freq: defaultdict[str, int] = defaultdict(int)
-    for ch in text:
-        freq[ch] += 1
+    for char in text:
+        freq[char] += 1
     assert freq["a"] == 5
 
 
@@ -181,8 +181,8 @@ def test_defaultdict_counting():
 def test_deque_sliding_window_log():
     # Keep only the last N log entries (bounded buffer)
     log: deque[str] = deque(maxlen=3)
-    for msg in ["boot", "connect", "login", "query", "logout"]:
-        log.append(msg)
+    for message in ["boot", "connect", "login", "query", "logout"]:
+        log.append(message)
 
     assert list(log) == ["login", "query", "logout"]
 
@@ -222,7 +222,7 @@ def test_heapq_top_k():
 def test_heapq_max_heap_trick():
     # Python only has min-heap; negate values to simulate max-heap
     nums = [3, 1, 4, 1, 5, 9, 2, 6]
-    heap = [-n for n in nums]
+    heap = [-number for number in nums]
     heapq.heapify(heap)
     assert -heapq.heappop(heap) == 9    # largest first
 

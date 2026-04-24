@@ -132,9 +132,9 @@ async def test_httpx_get_json():
 
 @respx.mock
 async def test_httpx_concurrent_requests():
-    for uid in range(1, 4):
-        respx.get(f"https://api.example.com/users/{uid}").mock(
-            return_value=httpx.Response(200, json={"id": uid})
+    for user_id in range(1, 4):
+        respx.get(f"https://api.example.com/users/{user_id}").mock(
+            return_value=httpx.Response(200, json={"id": user_id})
         )
 
     async with httpx.AsyncClient() as client:
@@ -144,7 +144,7 @@ async def test_httpx_concurrent_requests():
             client.get("https://api.example.com/users/3"),
         )
 
-    assert [r.json()["id"] for r in results] == [1, 2, 3]
+    assert [response.json()["id"] for response in results] == [1, 2, 3]
 
 
 @respx.mock

@@ -128,7 +128,7 @@ def sample_users():
 
 
 def test_fixture_filters_active(sample_users):
-    active = [u for u in sample_users if u["active"]]
+    active = [user for user in sample_users if user["active"]]
     assert len(active) == 2
     assert active[0]["name"] == "Alice"
 

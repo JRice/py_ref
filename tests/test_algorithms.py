@@ -23,20 +23,20 @@ def test_dfs_connected_components():
     rows, cols = len(grid), len(grid[0])
     visited = set()
 
-    def dfs(r, c):
-        if r < 0 or r >= rows or c < 0 or c >= cols:
+    def dfs(row, col):
+        if row < 0 or row >= rows or col < 0 or col >= cols:
             return
-        if (r, c) in visited or grid[r][c] == 0:
+        if (row, col) in visited or grid[row][col] == 0:
             return
-        visited.add((r, c))
-        for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:
-            dfs(r + dr, c + dc)
+        visited.add((row, col))
+        for delta_row, delta_col in [(-1,0),(1,0),(0,-1),(0,1)]:
+            dfs(row + delta_row, col + delta_col)
 
     islands = 0
-    for r in range(rows):
-        for c in range(cols):
-            if grid[r][c] == 1 and (r, c) not in visited:
-                dfs(r, c)
+    for row in range(rows):
+        for col in range(cols):
+            if grid[row][col] == 1 and (row, col) not in visited:
+                dfs(row, col)
                 islands += 1
 
     assert islands == 3
@@ -114,8 +114,8 @@ def test_top_k_frequent_words():
     """Return the k most frequent words."""
     words = "the cat sat on the mat the cat sat".split()
     counts = defaultdict(int)
-    for w in words:
-        counts[w] += 1
+    for word in words:
+        counts[word] += 1
 
     # min-heap of size k — cheapest to maintain
     k = 2
@@ -140,7 +140,7 @@ def test_sorting_with_key():
         {"name": "Carol", "age": 30},
     ]
     # Sort by age asc, then name asc
-    people.sort(key=lambda p: (p["age"], p["name"]))
+    people.sort(key=lambda person: (person["age"], person["name"]))
     assert people[0]["name"] == "Bob"
     assert people[1]["name"] == "Alice"   # age=30, A < C
 
@@ -192,17 +192,17 @@ def test_two_pointers_pair_sum():
     """Find pair that sums to target in sorted array."""
     nums = [1, 2, 4, 6, 8, 9, 14, 15]
     target = 13
-    lo, hi = 0, len(nums) - 1
+    lower, upper = 0, len(nums) - 1
     found = None
-    while lo < hi:
-        s = nums[lo] + nums[hi]
-        if s == target:
-            found = (nums[lo], nums[hi])
+    while lower < upper:
+        pair_sum = nums[lower] + nums[upper]
+        if pair_sum == target:
+            found = (nums[lower], nums[upper])
             break
-        elif s < target:
-            lo += 1
+        elif pair_sum < target:
+            lower += 1
         else:
-            hi -= 1
+            upper -= 1
 
     assert found == (4, 9)
 
@@ -254,15 +254,15 @@ def test_topological_sort_task_order():
     """Find a valid order to complete tasks given prerequisites."""
     # (prerequisite, task) edges
     edges = [(0,1), (0,2), (1,3), (2,3), (3,4)]
-    n = 5
+    node_count = 5
 
-    in_degree = [0] * n
+    in_degree = [0] * node_count
     adj = defaultdict(list)
-    for src, dst in edges:
-        adj[src].append(dst)
-        in_degree[dst] += 1
+    for source, destination in edges:
+        adj[source].append(destination)
+        in_degree[destination] += 1
 
-    queue = deque(i for i in range(n) if in_degree[i] == 0)
+    queue = deque(i for i in range(node_count) if in_degree[i] == 0)
     order = []
     while queue:
         node = queue.popleft()
@@ -272,7 +272,7 @@ def test_topological_sort_task_order():
             if in_degree[neighbor] == 0:
                 queue.append(neighbor)
 
-    assert len(order) == n          # all nodes visited — no cycle
+    assert len(order) == node_count          # all nodes visited — no cycle
     assert order.index(0) < order.index(3)
     assert order.index(3) < order.index(4)
 
@@ -284,7 +284,7 @@ def test_topological_sort_task_order():
 def test_merge_intervals():
     """Merge overlapping calendar events."""
     intervals = [[1,3],[2,6],[8,10],[15,18]]
-    intervals.sort(key=lambda x: x[0])
+    intervals.sort(key=lambda interval: interval[0])
 
     merged = [intervals[0]]
     for start, end in intervals[1:]:
@@ -324,10 +324,10 @@ def test_tabulation_coin_change():
 
     dp = [float("inf")] * (amount + 1)
     dp[0] = 0
-    for a in range(1, amount + 1):
-        for c in coins:
-            if c <= a:
-                dp[a] = min(dp[a], dp[a - c] + 1)
+    for target_amount in range(1, amount + 1):
+        for coin in coins:
+            if coin <= target_amount:
+                dp[target_amount] = min(dp[target_amount], dp[target_amount - coin] + 1)
 
     assert dp[amount] == 3   # 25 + 10 + 1
 
@@ -342,9 +342,9 @@ def test_monotonic_stack_next_greater():
     result = [-1] * len(nums)
     stack = []   # stores indices, maintains decreasing values
 
-    for i, n in enumerate(nums):
-        while stack and nums[stack[-1]] < n:
-            result[stack.pop()] = n
+    for i, number in enumerate(nums):
+        while stack and nums[stack[-1]] < number:
+            result[stack.pop()] = number
         stack.append(i)
 
     assert result == [4, 4, 6, 6, -1, -1]
@@ -358,18 +358,18 @@ def test_monotonic_deque_window_max():
     """Maximum value in every window of size k."""
     nums = [1, 3, -1, -3, 5, 3, 6, 7]
     k = 3
-    dq: deque[int] = deque()   # stores indices; front = max of current window
+    queue: deque[int] = deque()   # stores indices; front = max of current window
     result = []
 
-    for i, n in enumerate(nums):
+    for i, number in enumerate(nums):
         # Remove indices outside window
-        while dq and dq[0] < i - k + 1:
-            dq.popleft()
+        while queue and queue[0] < i - k + 1:
+            queue.popleft()
         # Maintain decreasing order
-        while dq and nums[dq[-1]] < n:
-            dq.pop()
-        dq.append(i)
+        while queue and nums[queue[-1]] < number:
+            queue.pop()
+        queue.append(i)
         if i >= k - 1:
-            result.append(nums[dq[0]])
+            result.append(nums[queue[0]])
 
     assert result == [3, 3, 5, 5, 6, 7]
