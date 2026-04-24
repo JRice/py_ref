@@ -218,7 +218,6 @@ def test_two_pointers_remove_duplicates():
     assert write == 4
     assert nums[:write] == [1, 2, 3, 4]
 
-
 # ---------------------------------------------------------------------------
 # Fast / Slow Pointers — Floyd's cycle detection
 # ---------------------------------------------------------------------------
@@ -256,10 +255,13 @@ def test_topological_sort_task_order():
     edges = [(0,1), (0,2), (1,3), (2,3), (3,4)]
     node_count = 5
 
+    # "in-degree" is a graph-theory term for "number of input edges". It's used here to keep track of the number of
+    # pre-requisites required and is decremented as those tasks are added to the task-order: once it's zero, all pre-
+    # reques have been fulfilled and we can add the task itself.
     in_degree = [0] * node_count
-    adj = defaultdict(list)
+    adjacency_list = defaultdict(list)
     for source, destination in edges:
-        adj[source].append(destination)
+        adjacency_list[source].append(destination)
         in_degree[destination] += 1
 
     queue = deque(i for i in range(node_count) if in_degree[i] == 0)
@@ -267,7 +269,7 @@ def test_topological_sort_task_order():
     while queue:
         node = queue.popleft()
         order.append(node)
-        for neighbor in adj[node]:
+        for neighbor in adjacency_list[node]:
             in_degree[neighbor] -= 1
             if in_degree[neighbor] == 0:
                 queue.append(neighbor)
@@ -275,7 +277,6 @@ def test_topological_sort_task_order():
     assert len(order) == node_count          # all nodes visited — no cycle
     assert order.index(0) < order.index(3)
     assert order.index(3) < order.index(4)
-
 
 # ---------------------------------------------------------------------------
 # Merge Intervals
@@ -314,7 +315,7 @@ def test_memoization_fibonacci():
 
 
 # ---------------------------------------------------------------------------
-# Tabulation — bottom-up DP
+# Tabulation — bottom-up Dynamic Programming (DP)
 # ---------------------------------------------------------------------------
 
 def test_tabulation_coin_change():
